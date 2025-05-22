@@ -1,64 +1,41 @@
 "use client";
 
 import { useState, useEffect } from 'react';
+import { useTheme } from '@/contexts/ThemeContext';
 
 export default function DarkModeToggle() {
-  const [darkMode, setDarkMode] = useState(false);
-
-  // Initialize dark mode based on system preference or localStorage
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+  
+  // Use useEffect to track mounted state
   useEffect(() => {
-    // Check if localStorage has a theme preference
-    const savedTheme = localStorage.getItem('theme');
-    
-    if (savedTheme === 'dark') {
-      setDarkMode(true);
-      document.documentElement.classList.add('dark');
-      document.documentElement.classList.remove('light');
-    } else if (savedTheme === 'light') {
-      setDarkMode(false);
-      document.documentElement.classList.remove('dark');
-      document.documentElement.classList.add('light');
-    } else {
-      // If no saved preference, use system preference
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      setDarkMode(prefersDark);
-      if (prefersDark) {
-        document.documentElement.classList.add('dark');
-        document.documentElement.classList.remove('light');
-      } else {
-        document.documentElement.classList.remove('dark');
-        document.documentElement.classList.add('light');
-      }
-    }
+    setMounted(true);
+    return () => setMounted(false);
   }, []);
-
+  
   // Toggle dark mode
   const toggleDarkMode = () => {
-    const newDarkMode = !darkMode;
-    setDarkMode(newDarkMode);
-    
-    if (newDarkMode) {
-      document.documentElement.classList.add('dark');
-      document.documentElement.classList.remove('light');
-      localStorage.setItem('theme', 'dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-      document.documentElement.classList.add('light');
-      localStorage.setItem('theme', 'light');
-    }
+    setTheme(theme === 'dark' ? 'light' : 'dark');
   };
+
+  // Don't render anything until after client-side hydration to avoid mismatch
+  if (!mounted) {
+    return <div className="w-5 h-5"></div>; // Placeholder with same dimensions
+  }
+  
+  const isDarkMode = theme === 'dark';
 
   return (
     <button
       onClick={toggleDarkMode}
       className={`p-2 rounded-full transition-all duration-300 transform hover:scale-110 ${
-        darkMode 
+        isDarkMode 
           ? 'bg-lavender-900 text-lavender-100 hover:bg-lavender-800' 
           : 'bg-sakura-100 text-sakura-600 hover:bg-sakura-200'
       }`}
-      aria-label={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}
+      aria-label={isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'}
     >
-      {darkMode ? (
+      {isDarkMode ? (
         // Sun icon for light mode - anime style
         <div className="relative w-5 h-5">
           <svg

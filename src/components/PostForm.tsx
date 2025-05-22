@@ -6,6 +6,7 @@ import { BlogPost } from '@/lib/blog';
 import { createPost, updatePost, fetchTags } from '@/lib/api';
 import dynamic from 'next/dynamic';
 import MDXContent from './MDXContent';
+import { useRouteCache } from '@/hooks/useRouteCache';
 
 // Import the markdown editor dynamically to avoid SSR issues
 const MDEditor = dynamic(
@@ -108,6 +109,9 @@ export default function PostForm({ initialData, isEditing = false }: PostFormPro
     }
   };
 
+  // Get route cache utilities
+  const { clearSpecificRoute } = useRouteCache();
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -132,8 +136,28 @@ export default function PostForm({ initialData, isEditing = false }: PostFormPro
       let result;
       if (isEditing && initialData?.slug) {
         result = await updatePost(initialData.slug, postData);
+        
+        // Clear the cache for this specific blog post page
+        clearSpecificRoute(`/blog/${initialData.slug}`);
+        
+        // Also clear the tag pages if the post has tags
+        if (formData.tags && formData.tags.length > 0) {
+          formData.tags.forEach(tag => {
+            clearSpecificRoute(`/tags/${tag}`);
+          });
+        }
       } else {
         result = await createPost(postData as Omit<BlogPost, 'id'>);
+        
+        // Clear the cache for the home page and blog listing pages
+        clearSpecificRoute('/');
+        
+        // Also clear the tag pages if the post has tags
+        if (formData.tags && formData.tags.length > 0) {
+          formData.tags.forEach(tag => {
+            clearSpecificRoute(`/tags/${tag}`);
+          });
+        }
       }
       
       if (result) {

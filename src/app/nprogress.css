@@ -4,13 +4,26 @@
 }
 
 #nprogress .bar {
-  background: #0070f3; /* Blue color for the progress bar */
+  background: linear-gradient(to right, #0070f3, #00c6ff); /* Gradient for the progress bar */
   position: fixed;
   z-index: 1031;
   top: 0;
   left: 0;
   width: 100%;
-  height: 3px;
+  height: 4px; /* Slightly thicker */
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0px #0070f3;
+  }
+  50% {
+    box-shadow: 0 0 10px #0070f3;
+  }
+  100% {
+    box-shadow: 0 0 0px #0070f3;
+  }
 }
 
 /* Fancy blur effect */
@@ -20,14 +33,29 @@
   right: 0px;
   width: 100px;
   height: 100%;
-  box-shadow: 0 0 10px #0070f3, 0 0 5px #0070f3;
+  box-shadow: 0 0 15px #0070f3, 0 0 8px #0070f3; /* Enhanced glow */
   opacity: 1.0;
   transform: rotate(3deg) translate(0px, -4px);
 }
 
 /* Dark mode support */
-html.dark #nprogress .bar,
+html.dark #nprogress .bar {
+  background: linear-gradient(to right, #38bdf8, #06b6d4); /* Gradient for dark mode */
+  animation: pulseDark 1.5s infinite;
+}
+
+@keyframes pulseDark {
+  0% {
+    box-shadow: 0 0 0px #38bdf8;
+  }
+  50% {
+    box-shadow: 0 0 10px #38bdf8;
+  }
+  100% {
+    box-shadow: 0 0 0px #38bdf8;
+  }
+}
+
 html.dark #nprogress .peg {
-  background: #38bdf8; /* Lighter blue for dark mode */
-  box-shadow: 0 0 10px #38bdf8, 0 0 5px #38bdf8;
+  box-shadow: 0 0 15px #38bdf8, 0 0 8px #38bdf8; /* Enhanced glow for dark mode */
 }

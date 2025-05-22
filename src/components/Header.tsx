@@ -3,8 +3,10 @@
 import Link from 'next/link';
 import DarkModeToggle from './DarkModeToggle';
 import { useState, useEffect } from 'react';
+import { useSession, signOut } from 'next-auth/react';
 
 export default function Header() {
+  const { data: session } = useSession();
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -14,6 +16,10 @@ export default function Header() {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  const handleSignOut = async () => {
+    await signOut({ callbackUrl: '/' });
+  };
 
   return (
     <header className={`sticky top-0 z-50 transition-all duration-300 ${
@@ -48,14 +54,39 @@ export default function Header() {
               >
                 关于
               </Link>
-              <Link 
-                href="/admin" 
-                className="font-quicksand text-purple-600 dark:text-purple-400 hover:text-purple-800 dark:hover:text-purple-300 transition-colors duration-200"
-              >
-                管理
-              </Link>
+              {session?.user?.role === 'admin' && (
+                <Link 
+                  href="/admin" 
+                  className="font-quicksand text-purple-600 dark:text-purple-400 hover:text-purple-800 dark:hover:text-purple-300 transition-colors duration-200"
+                >
+                  管理
+                </Link>
+              )}
             </nav>
-            <DarkModeToggle />
+            <div className="flex items-center space-x-4">
+              <DarkModeToggle />
+              
+              {session ? (
+                <div className="flex items-center space-x-4">
+                  <span className="text-sm text-gray-700 dark:text-gray-300">
+                    {session.user?.name}
+                  </span>
+                  <button
+                    onClick={handleSignOut}
+                    className="text-sm font-medium text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300"
+                  >
+                    退出
+                  </button>
+                </div>
+              ) : (
+                <Link
+                  href="/login"
+                  className="text-sm font-medium text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 dark:hover:text-indigo-300"
+                >
+                  登录
+                </Link>
+              )}
+            </div>
           </div>
         </div>
       </div>
