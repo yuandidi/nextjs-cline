@@ -46,14 +46,19 @@ export default function SearchBar({ posts }: SearchBarProps) {
   };
 
   return (
-    <div className="relative w-full max-w-md mx-auto mb-8">
+    <div className="relative w-full max-w-md mx-auto mb-12">
       <div className="relative">
+        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-sakura-500 dark:text-sakura-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+        </div>
         <input
           type="text"
-          placeholder="Search posts..."
+          placeholder="搜索文章..."
           value={searchTerm}
           onChange={handleSearch}
-          className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+          className="w-full pl-10 pr-10 py-3 border-2 border-sakura-200 dark:border-sakura-800 rounded-full focus:outline-none focus:ring-2 focus:ring-sakura-500 dark:focus:ring-sakura-400 dark:bg-gray-800 dark:text-white font-quicksand transition-all duration-200 shadow-sm hover:shadow-md"
         />
         {searchTerm && (
           <button
@@ -62,7 +67,7 @@ export default function SearchBar({ posts }: SearchBarProps) {
               setSearchResults([]);
               setIsSearching(false);
             }}
-            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
+            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-sakura-500 dark:text-sakura-400 hover:text-sakura-700 dark:hover:text-sakura-300 transition-colors duration-200"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
               <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
@@ -72,15 +77,15 @@ export default function SearchBar({ posts }: SearchBarProps) {
       </div>
       
       {isSearching && searchResults.length > 0 && (
-        <div className="absolute z-10 w-full mt-2 bg-white dark:bg-gray-800 rounded-md shadow-lg border border-gray-200 dark:border-gray-700 max-h-96 overflow-y-auto">
+        <div className="absolute z-10 w-full mt-2 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-sakura-200 dark:border-sakura-800 max-h-96 overflow-y-auto">
           <ul>
             {searchResults.map((post) => (
-              <li key={post.slug} className="border-b border-gray-200 dark:border-gray-700 last:border-b-0">
+              <li key={post.slug} className="border-b border-sakura-100 dark:border-sakura-900 last:border-b-0">
                 <button
                   onClick={() => handleResultClick(post.slug)}
-                  className="w-full text-left px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                  className="w-full text-left px-4 py-3 hover:bg-sakura-50 dark:hover:bg-gray-700 transition-colors"
                 >
-                  <h3 className="font-medium text-gray-900 dark:text-white">{post.title}</h3>
+                  <h3 className="font-medium font-quicksand text-gray-900 dark:text-white">{post.title}</h3>
                   <p className="text-sm text-gray-600 dark:text-gray-300 mt-1 line-clamp-2">{post.excerpt}</p>
                 </button>
               </li>
@@ -90,8 +95,8 @@ export default function SearchBar({ posts }: SearchBarProps) {
       )}
       
       {isSearching && searchTerm && searchResults.length === 0 && (
-        <div className="absolute z-10 w-full mt-2 bg-white dark:bg-gray-800 rounded-md shadow-lg border border-gray-200 dark:border-gray-700 p-4 text-center">
-          <p className="text-gray-600 dark:text-gray-300">No results found for &quot;{searchTerm}&quot;</p>
+        <div className="absolute z-10 w-full mt-2 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-sakura-200 dark:border-sakura-800 p-4 text-center">
+          <p className="text-sakura-600 dark:text-sakura-400 font-quicksand">没有找到与 &quot;{searchTerm}&quot; 相关的结果</p>
         </div>
       )}
     </div>

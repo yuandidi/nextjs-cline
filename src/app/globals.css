@@ -5,11 +5,31 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --accent-color: #ff6699; /* Sakura pink */
+  --secondary-color: #9966ff; /* Lavender */
 }
 
 .dark {
   --background: #0a0a0a;
   --foreground: #ededed;
+  --accent-color: #ff85ad; /* Lighter Sakura pink for dark mode */
+  --secondary-color: #c2a3ff; /* Lighter Lavender for dark mode */
+}
+
+/* Anime-inspired decorative elements */
+.anime-border {
+  border-image: linear-gradient(45deg, var(--accent-color), var(--secondary-color)) 1;
+}
+
+.anime-glow {
+  box-shadow: 0 0 15px rgba(255, 102, 153, 0.5);
+}
+
+.anime-gradient-text {
+  background: linear-gradient(45deg, var(--accent-color), var(--secondary-color));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 @theme inline {

@@ -1,24 +1,24 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist_Mono } from "next/font/google";
 import "./globals.css";
 import "./nprogress.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import LoadingProvider from "@/components/LoadingProvider";
+import "@fontsource/noto-sans-jp/400.css";
+import "@fontsource/noto-sans-jp/700.css";
+import "@fontsource/quicksand/400.css";
+import "@fontsource/quicksand/700.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
+// Keep Geist Mono for code blocks
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
-  title: "My Blog",
-  description: "A personal blog built with Next.js",
+  title: "二次元博客 | Anime Blog",
+  description: "探索动漫、游戏、编程和二次元文化的世界",
 };
 
 export default function RootLayout({
@@ -49,7 +49,7 @@ export default function RootLayout({
         }} />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col bg-white dark:bg-gray-900 text-gray-900 dark:text-white`}
+        className={`${geistMono.variable} antialiased min-h-screen flex flex-col bg-white dark:bg-gray-900 text-gray-900 dark:text-white font-quicksand`}
       >
         <LoadingProvider />
         <Header />
