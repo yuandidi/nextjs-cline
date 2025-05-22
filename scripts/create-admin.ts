@@ -1,5 +1,5 @@
-import { PrismaClient } from '@prisma/client';
-import bcrypt from 'bcrypt';
+const { PrismaClient } = require('@prisma/client');
+const bcrypt = require('bcrypt');
 
 const prisma = new PrismaClient();
 
@@ -15,8 +15,6 @@ async function main() {
 
   try {
     // Check if user already exists
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-expect-error
     const existingUser = await prisma.user.findUnique({
       where: { email },
     });
@@ -26,8 +24,6 @@ async function main() {
       
       // Update the user to be an admin if they're not already
       if (existingUser.role !== 'admin') {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
         await prisma.user.update({
           where: { email },
           data: { role: 'admin' },
@@ -44,8 +40,6 @@ async function main() {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Create admin user
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
     const user = await prisma.user.create({
       data: {
         name,

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist_Mono } from "next/font/google";
+import { Roboto_Mono } from "next/font/google";
 import "./globals.css";
 import "./nprogress.css";
 import Header from "@/components/Header";
@@ -13,8 +13,8 @@ import "@fontsource/quicksand/400.css";
 import "@fontsource/quicksand/700.css";
 
 // Keep Geist Mono for code blocks
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const robotoMono = Roboto_Mono({
+  variable: "--font-roboto-mono",
   subsets: ["latin"],
 });
 
@@ -33,7 +33,7 @@ export default function RootLayout({
       <SessionProvider>
         <ThemeProvider>
           <body
-            className={`${geistMono.variable} antialiased min-h-screen flex flex-col bg-white dark:bg-gray-900 text-gray-900 dark:text-white font-quicksand`}
+            className={`${robotoMono.variable} antialiased min-h-screen flex flex-col bg-white dark:bg-gray-900 text-gray-900 dark:text-white font-quicksand`}
           >
             <LoadingProvider />
             <Header />
