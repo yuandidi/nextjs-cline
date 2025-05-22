@@ -1,8 +1,16 @@
 import { getAllTags, getPostsByTag } from '@/lib/blog';
 import Link from 'next/link';
 
-export default function TagsPage() {
-  const tags = getAllTags();
+export default async function TagsPage() {
+  const tags = await getAllTags();
+  
+  // Get post counts for each tag
+  const tagCounts = await Promise.all(
+    tags.map(async (tag) => {
+      const posts = await getPostsByTag(tag);
+      return { tag, count: posts.length };
+    })
+  );
   
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -19,7 +27,7 @@ export default function TagsPage() {
       </div>
       
       <div className="flex flex-wrap gap-4">
-        {tags.map((tag) => (
+        {tagCounts.map(({ tag, count }) => (
           <Link
             key={tag}
             href={`/tags/${tag}`}
@@ -27,7 +35,7 @@ export default function TagsPage() {
           >
             <span className="font-medium">#{tag}</span>
             <span className="ml-2 text-sm text-gray-500 dark:text-gray-400">
-              ({getPostsByTag(tag).length})
+              ({count})
             </span>
           </Link>
         ))}

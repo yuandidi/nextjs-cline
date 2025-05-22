@@ -48,6 +48,12 @@ export default function Header() {
               >
                 关于
               </Link>
+              <Link 
+                href="/admin" 
+                className="font-quicksand text-purple-600 dark:text-purple-400 hover:text-purple-800 dark:hover:text-purple-300 transition-colors duration-200"
+              >
+                管理
+              </Link>
             </nav>
             <DarkModeToggle />
           </div>

@@ -3,7 +3,7 @@ import { Metadata } from 'next';
 
 // Generate static params for all blog posts
 export async function generateStaticParams() {
-  const slugs = getAllPostSlugs();
+  const slugs = await getAllPostSlugs();
   return slugs.map((slug) => ({ slug }));
 }
 
