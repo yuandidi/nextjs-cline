@@ -8,6 +8,9 @@ export interface BlogPost {
   coverImage?: string;
   content: string;
   tags?: string[];
+  isDraft?: boolean;
+  seoDescription?: string;
+  seoKeywords?: string;
 }
 
 // Sample blog posts for development

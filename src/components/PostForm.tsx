@@ -4,11 +4,22 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { BlogPost } from '@/lib/blog';
 import { createPost, updatePost, fetchTags } from '@/lib/api';
+import dynamic from 'next/dynamic';
+import MDXContent from './MDXContent';
+
+// Import the markdown editor dynamically to avoid SSR issues
+const MDEditor = dynamic(
+  () => import('@uiw/react-md-editor').then((mod) => mod.default),
+  { ssr: false }
+);
 
 interface PostFormProps {
   initialData?: Partial<BlogPost>;
   isEditing?: boolean;
 }
+
+// Define the view modes for the editor
+type EditorViewMode = 'edit' | 'live' | 'preview';
 
 export default function PostForm({ initialData, isEditing = false }: PostFormProps) {
   const router = useRouter();
@@ -27,6 +38,10 @@ export default function PostForm({ initialData, isEditing = false }: PostFormPro
   const [newTag, setNewTag] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [viewMode, setViewMode] = useState<EditorViewMode>('edit');
+  const [isDraft, setIsDraft] = useState(initialData?.isDraft ?? true);
+  const [seoDescription, setSeoDescription] = useState(initialData?.seoDescription || '');
+  const [seoKeywords, setSeoKeywords] = useState(initialData?.seoKeywords || '');
 
   useEffect(() => {
     const loadTags = async () => {
@@ -41,9 +56,34 @@ export default function PostForm({ initialData, isEditing = false }: PostFormPro
     loadTags();
   }, []);
 
+  // Generate slug from title
+  const generateSlug = (title: string) => {
+    return title
+      .toLowerCase()
+      .replace(/[^\w\s-]/g, '') // Remove special characters
+      .replace(/\s+/g, '-') // Replace spaces with hyphens
+      .replace(/-+/g, '-') // Replace multiple hyphens with single hyphen
+      .trim();
+  };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    
+    // Auto-generate slug from title if not editing
+    if (name === 'title' && !isEditing) {
+      setFormData(prev => ({ 
+        ...prev, 
+        [name]: value,
+        slug: generateSlug(value)
+      }));
+    } else {
+      setFormData(prev => ({ ...prev, [name]: value }));
+    }
+  };
+
+  // Handle markdown editor content change
+  const handleContentChange = (value?: string) => {
+    setFormData(prev => ({ ...prev, content: value || '' }));
   };
 
   const handleTagChange = (tag: string) => {
@@ -81,11 +121,19 @@ export default function PostForm({ initialData, isEditing = false }: PostFormPro
       setLoading(true);
       setError(null);
       
+      // Add SEO metadata and draft status to the post data
+      const postData = {
+        ...formData,
+        isDraft,
+        seoDescription,
+        seoKeywords
+      };
+      
       let result;
       if (isEditing && initialData?.slug) {
-        result = await updatePost(initialData.slug, formData);
+        result = await updatePost(initialData.slug, postData);
       } else {
-        result = await createPost(formData as Omit<BlogPost, 'id'>);
+        result = await createPost(postData as Omit<BlogPost, 'id'>);
       }
       
       if (result) {
@@ -101,6 +149,8 @@ export default function PostForm({ initialData, isEditing = false }: PostFormPro
     }
   };
 
+  // No toggle function needed as we're using viewMode directly
+
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {error && (
@@ -109,55 +159,85 @@ export default function PostForm({ initialData, isEditing = false }: PostFormPro
         </div>
       )}
       
-      <div>
-        <label htmlFor="title" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-          Title *
-        </label>
-        <input
-          type="text"
-          id="title"
-          name="title"
-          value={formData.title || ''}
-          onChange={handleChange}
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white"
-          required
-        />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <label htmlFor="title" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            Title *
+          </label>
+          <input
+            type="text"
+            id="title"
+            name="title"
+            value={formData.title || ''}
+            onChange={handleChange}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white"
+            required
+          />
+        </div>
+        
+        <div>
+          <label htmlFor="slug" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            Slug *
+          </label>
+          <input
+            type="text"
+            id="slug"
+            name="slug"
+            value={formData.slug || ''}
+            onChange={handleChange}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white"
+            required
+            disabled={isEditing}
+          />
+          {isEditing && (
+            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+              Slug cannot be changed after creation.
+            </p>
+          )}
+        </div>
       </div>
       
-      <div>
-        <label htmlFor="slug" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-          Slug *
-        </label>
-        <input
-          type="text"
-          id="slug"
-          name="slug"
-          value={formData.slug || ''}
-          onChange={handleChange}
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white"
-          required
-          disabled={isEditing}
-        />
-        {isEditing && (
-          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-            Slug cannot be changed after creation.
-          </p>
-        )}
-      </div>
-      
-      <div>
-        <label htmlFor="date" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-          Date *
-        </label>
-        <input
-          type="date"
-          id="date"
-          name="date"
-          value={formData.date ? formData.date.toString().split('T')[0] : ''}
-          onChange={handleChange}
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white"
-          required
-        />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <label htmlFor="date" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            Date *
+          </label>
+          <input
+            type="date"
+            id="date"
+            name="date"
+            value={formData.date ? formData.date.toString().split('T')[0] : ''}
+            onChange={handleChange}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white"
+            required
+          />
+        </div>
+        
+        <div>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            Status
+          </label>
+          <div className="mt-2 flex items-center space-x-4">
+            <label className="inline-flex items-center">
+              <input
+                type="radio"
+                checked={isDraft}
+                onChange={() => setIsDraft(true)}
+                className="rounded-full border-gray-300 text-blue-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700"
+              />
+              <span className="ml-2 text-gray-700 dark:text-gray-300">Draft</span>
+            </label>
+            <label className="inline-flex items-center">
+              <input
+                type="radio"
+                checked={!isDraft}
+                onChange={() => setIsDraft(false)}
+                className="rounded-full border-gray-300 text-blue-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700"
+              />
+              <span className="ml-2 text-gray-700 dark:text-gray-300">Published</span>
+            </label>
+          </div>
+        </div>
       </div>
       
       <div>
@@ -175,18 +255,71 @@ export default function PostForm({ initialData, isEditing = false }: PostFormPro
         />
       </div>
       
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <label htmlFor="seoDescription" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            SEO Description
+          </label>
+          <textarea
+            id="seoDescription"
+            value={seoDescription}
+            onChange={(e) => setSeoDescription(e.target.value)}
+            rows={2}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white"
+            placeholder="Meta description for search engines"
+          />
+          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+            {seoDescription.length}/160 characters
+          </p>
+        </div>
+        
+        <div>
+          <label htmlFor="seoKeywords" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            SEO Keywords
+          </label>
+          <input
+            type="text"
+            id="seoKeywords"
+            value={seoKeywords}
+            onChange={(e) => setSeoKeywords(e.target.value)}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white"
+            placeholder="Comma-separated keywords"
+          />
+        </div>
+      </div>
+      
       <div>
         <label htmlFor="coverImage" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
           Cover Image URL
         </label>
-        <input
-          type="text"
-          id="coverImage"
-          name="coverImage"
-          value={formData.coverImage || ''}
-          onChange={handleChange}
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white"
-        />
+        <div className="mt-1 flex">
+          <input
+            type="text"
+            id="coverImage"
+            name="coverImage"
+            value={formData.coverImage || ''}
+            onChange={handleChange}
+            className="flex-grow rounded-l-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white"
+          />
+          <button
+            type="button"
+            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-r-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          >
+            Browse
+          </button>
+        </div>
+        {formData.coverImage && (
+          <div className="mt-2">
+            <img 
+              src={formData.coverImage} 
+              alt="Cover preview" 
+              className="h-40 w-auto object-cover rounded-md"
+              onError={(e) => {
+                (e.target as HTMLImageElement).src = '/images/blog/nextjs-cover.jpg';
+              }}
+            />
+          </div>
+        )}
       </div>
       
       <div>
@@ -195,7 +328,7 @@ export default function PostForm({ initialData, isEditing = false }: PostFormPro
         </label>
         <div className="flex flex-wrap gap-2 mb-4">
           {availableTags.map(tag => (
-            <label key={tag} className="inline-flex items-center">
+            <label key={tag} className="inline-flex items-center bg-gray-100 dark:bg-gray-700 px-3 py-1 rounded-full">
               <input
                 type="checkbox"
                 checked={(formData.tags || []).includes(tag)}
@@ -225,19 +358,67 @@ export default function PostForm({ initialData, isEditing = false }: PostFormPro
       </div>
       
       <div>
-        <label htmlFor="content" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-          Content *
-        </label>
-        <textarea
-          id="content"
-          name="content"
-          value={formData.content || ''}
-          onChange={handleChange}
-          rows={15}
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white font-mono"
-          required
-        />
+        <div className="flex justify-between items-center mb-2">
+          <label htmlFor="content" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            Content *
+          </label>
+          <div className="flex space-x-2">
+            <button
+              type="button"
+              onClick={() => setViewMode('edit')}
+              className={`px-3 py-1 text-sm rounded-md ${
+                viewMode === 'edit' 
+                  ? 'bg-blue-600 text-white' 
+                  : 'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300'
+              }`}
+            >
+              Edit
+            </button>
+            <button
+              type="button"
+              onClick={() => setViewMode('live')}
+              className={`px-3 py-1 text-sm rounded-md ${
+                viewMode === 'live' 
+                  ? 'bg-blue-600 text-white' 
+                  : 'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300'
+              }`}
+            >
+              Live
+            </button>
+            <button
+              type="button"
+              onClick={() => setViewMode('preview')}
+              className={`px-3 py-1 text-sm rounded-md ${
+                viewMode === 'preview' 
+                  ? 'bg-blue-600 text-white' 
+                  : 'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300'
+              }`}
+            >
+              Preview
+            </button>
+          </div>
+        </div>
+        
+        {/* Markdown Editor */}
+        <div data-color-mode="auto">
+          <MDEditor
+            value={formData.content || ''}
+            onChange={handleContentChange}
+            preview={viewMode}
+            height={400}
+            className="mt-1"
+          />
+        </div>
       </div>
+      
+      {viewMode === 'preview' && (
+        <div className="border rounded-md p-6 bg-white dark:bg-gray-800">
+          <h2 className="text-2xl font-bold mb-4">{formData.title || 'Post Title'}</h2>
+          <div className="prose dark:prose-invert max-w-none">
+            <MDXContent source={formData.content || ''} />
+          </div>
+        </div>
+      )}
       
       <div className="flex justify-end space-x-3">
         <button
