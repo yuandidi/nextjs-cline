@@ -1,0 +1,59 @@
+---
+title: 'Getting Started with Next.js'
+date: '2025-05-20'
+excerpt: 'Learn how to build modern web applications with Next.js, a React framework with server-side rendering capabilities.'
+coverImage: '/images/blog/nextjs-cover.jpg'
+tags: ['nextjs', 'react', 'frontend']
+---
+
+# Getting Started with Next.js
+
+Next.js is a powerful React framework that enables functionality such as server-side rendering, static site generation, and API routes. It's designed to make building modern web applications easier and more efficient.
+
+## Why Choose Next.js?
+
+There are several reasons why Next.js has become a popular choice for developers:
+
+1. **Server-side Rendering (SSR)**: Next.js can render pages on the server, which improves performance and SEO.
+2. **Static Site Generation (SSG)**: You can generate static HTML files at build time, which can be served from a CDN for maximum performance.
+3. **API Routes**: Next.js allows you to create API endpoints as part of your application.
+4. **File-based Routing**: The routing system is based on the file structure, making it intuitive and easy to understand.
+5. **Built-in CSS and Sass Support**: Next.js has built-in support for CSS and Sass, making styling your application straightforward.
+
+## Setting Up a Next.js Project
+
+Getting started with Next.js is simple. You can create a new project using the following command:
+
+```bash
+npx create-next-app@latest my-app
+```
+
+This will set up a new Next.js project with all the necessary configurations. Once the installation is complete, you can navigate to the project directory and start the development server:
+
+```bash
+cd my-app
+npm run dev
+```
+
+Your Next.js application will be running at `http://localhost:3000`.
+
+## Creating Pages
+
+In Next.js, pages are React components exported from files in the `pages` directory (or `app` directory in the newer App Router). For example, to create a home page, you would create a file at `pages/index.js` or `app/page.js`:
+
+```jsx
+export default function Home() {
+  return (
+    <div>
+      <h1>Welcome to my website!</h1>
+      <p>This is the home page.</p>
+    </div>
+  );
+}
+```
+
+## Conclusion
+
+Next.js provides a powerful and flexible framework for building modern web applications. With its built-in features like server-side rendering, static site generation, and API routes, it's an excellent choice for developers looking to build high-performance React applications.
+
+In future posts, we'll explore more advanced features of Next.js, such as data fetching, dynamic routes, and deployment strategies.
