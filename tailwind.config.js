@@ -15,6 +15,28 @@ export default {
         quicksand: ['Quicksand', 'sans-serif'],
         'noto-jp': ['"Noto Sans JP"', 'sans-serif'],
       },
+      keyframes: {
+        flip: {
+          '0%, 100%': { transform: 'rotateY(0deg)' },
+          '50%': { transform: 'rotateY(180deg)' },
+        },
+        twinkle: {
+          '0%, 100%': { opacity: 0.4 },
+          '50%': { opacity: 1 },
+        },
+        'bounce-small': {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-20%)' },
+        },
+      },
+      animation: {
+        'flip': 'flip 0.6s ease-in-out',
+        'spin-slow': 'spin 3s linear infinite',
+        'bounce-small': 'bounce-small 0.6s ease-in-out',
+        'twinkle': 'twinkle 2s ease-in-out infinite',
+        'twinkle-delay': 'twinkle 2s ease-in-out 0.5s infinite',
+        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+      },
       colors: {
         // Anime-inspired color palette
         sakura: {
