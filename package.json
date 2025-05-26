@@ -13,6 +13,7 @@
     "seed": "ts-node --compiler-options \"{\\\"module\\\":\\\"CommonJS\\\"}\" prisma/seed.ts"
   },
   "dependencies": {
+    "@auth/core": "^0.34.2",
     "@auth/prisma-adapter": "^2.9.1",
     "@fontsource/noto-sans-jp": "^5.2.5",
     "@fontsource/quicksand": "^5.2.7",
@@ -25,7 +26,7 @@
     "gray-matter": "^4.0.3",
     "highlight.js": "^11.11.0",
     "next": "^14.2.0",
-    "next-auth": "^4.24.7",
+    "next-auth": "^4.24.11",
     "next-mdx-remote": "^5.0.0",
     "prisma": "^6.8.2",
     "react": "^18.3.1",

@@ -102,9 +102,56 @@ Header 组件已更新，根据用户登录状态显示不同的导航选项：
 
 身份验证配置位于 `src/lib/auth.ts` 文件中，可以根据需要进行自定义：
 
-- 添加更多身份验证提供商（如 Google、GitHub 等）
+- 添加更多身份验证提供商（如 Google 等）
 - 自定义回调函数
 - 修改会话处理方式
+
+## 社交登录
+
+### GitHub 登录
+
+本系统已集成 GitHub OAuth 登录功能，允许用户使用其 GitHub 账户进行登录和注册。实现遵循了第三方登录的最佳实践。
+
+#### 配置步骤
+
+1. 在 GitHub 上创建 OAuth 应用：
+   - 访问 GitHub 设置 -> Developer settings -> OAuth Apps -> New OAuth App
+   - 填写应用信息：
+     - Application name: 您的应用名称
+     - Homepage URL: 您的网站首页 URL
+     - Application description: 简短描述（可选）
+     - Authorization callback URL: `http://localhost:3000/api/auth/callback/github`（生产环境需更改为实际域名）
+
+2. 获取 Client ID 和 Client Secret
+
+3. 在 `.env` 文件中添加以下环境变量：
+   ```
+   GITHUB_ID=your_github_client_id
+   GITHUB_SECRET=your_github_client_secret
+   ```
+
+4. 重启应用以使配置生效
+
+#### 实现的最佳实践
+
+1. **品牌化按钮**：使用符合 GitHub 品牌指南的按钮样式和颜色
+2. **明确的权限说明**：在登录界面清晰说明用户授权的内容和隐私政策
+3. **无缝用户体验**：直接重定向到 GitHub 授权页面，减少不必要的步骤
+4. **安全处理**：
+   - 使用 JWT 策略保存会话状态
+   - 设置合理的会话过期时间（30天）
+   - 安全存储 OAuth 凭据
+5. **用户信息处理**：
+   - 自定义 profile 回调确保获取必要的用户信息
+   - 为 OAuth 用户设置默认角色
+   - 记录用户的登录提供商
+
+#### 安全注意事项
+
+- 确保 `NEXTAUTH_SECRET` 是一个强随机字符串
+- 生产环境中使用 HTTPS 保护 OAuth 回调
+- 定期审查授权的应用和权限
+- 考虑实现额外的安全措施，如登录通知或可疑活动检测
 
 ## 安全注意事项
 

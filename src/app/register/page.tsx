@@ -199,6 +199,7 @@ export default function RegisterPage() {
               </div>
             </form>
             
+            
             <div className="mt-6 text-center">
               <p className="text-sm text-gray-600 dark:text-gray-400">
                 已有账户？{' '}
