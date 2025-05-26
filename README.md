@@ -252,6 +252,39 @@ Header 组件已更新，根据用户登录状态显示不同的导航选项：
 
 4. 重启应用以使配置生效
 
+##### 常见问题排查
+
+如果在使用 GitHub 登录时遇到问题，请检查以下几点：
+
+1. **确保 NEXTAUTH_SECRET 已正确设置**：
+   - 在 `.env` 文件中，将 `NEXTAUTH_SECRET=your_nextauth_secret_key_here` 替换为一个真实的随机字符串
+   - 可以使用以下命令生成一个安全的随机字符串：
+     ```bash
+     node -e "console.log(crypto.randomBytes(32).toString('hex'))"
+     ```
+
+2. **验证 GitHub OAuth 应用配置**：
+   - 确保 Authorization callback URL 完全匹配 `http://localhost:3000/api/auth/callback/github`
+   - 检查 Client ID 和 Client Secret 是否正确复制到 `.env` 文件中
+
+3. **检查数据库连接**：
+   - 确保数据库已正确迁移：
+     ```bash
+     npx prisma migrate reset --force
+     ```
+   - 验证数据库文件权限是否正确
+
+4. **查看调试日志**：
+   - 在开发环境中，NextAuth.js 会输出调试日志
+   - 检查控制台是否有任何错误消息
+
+5. **回调页面问题**：
+   - 如果认证后停留在 `/api/auth/callback/github` 页面，可能是因为回调处理出现问题
+   - 尝试重新启动开发服务器：
+     ```bash
+     npm run dev
+     ```
+
 ### 安全注意事项
 
 - 确保 `NEXTAUTH_SECRET` 是一个强随机字符串
