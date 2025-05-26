@@ -4,10 +4,12 @@ import Link from 'next/link';
 import DarkModeToggle from './DarkModeToggle';
 import { useState, useEffect } from 'react';
 import { useSession, signOut } from 'next-auth/react';
+import { usePathname } from 'next/navigation';
 
 export default function Header() {
   const { data: session } = useSession();
   const [scrolled, setScrolled] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -38,26 +40,34 @@ export default function Header() {
             <nav className="flex space-x-8">
               <Link 
                 href="/" 
-                className="font-quicksand text-sakura-600 dark:text-sakura-400 hover:text-sakura-800 dark:hover:text-sakura-300 transition-colors duration-200"
+                className={`font-quicksand text-sakura-600 dark:text-sakura-400 hover:text-sakura-800 dark:hover:text-sakura-300 transition-colors duration-200 ${
+                  pathname === '/' ? 'font-bold border-b-2 border-sakura-500 dark:border-sakura-400' : ''
+                }`}
               >
                 首页
               </Link>
               <Link 
                 href="/tags" 
-                className="font-quicksand text-lavender-600 dark:text-lavender-400 hover:text-lavender-800 dark:hover:text-lavender-300 transition-colors duration-200"
+                className={`font-quicksand text-lavender-600 dark:text-lavender-400 hover:text-lavender-800 dark:hover:text-lavender-300 transition-colors duration-200 ${
+                  pathname === '/tags' || pathname.startsWith('/tags/') ? 'font-bold border-b-2 border-lavender-500 dark:border-lavender-400' : ''
+                }`}
               >
                 标签
               </Link>
               <Link 
                 href="/about" 
-                className="font-quicksand text-sky-600 dark:text-sky-400 hover:text-sky-800 dark:hover:text-sky-300 transition-colors duration-200"
+                className={`font-quicksand text-sky-600 dark:text-sky-400 hover:text-sky-800 dark:hover:text-sky-300 transition-colors duration-200 ${
+                  pathname === '/about' ? 'font-bold border-b-2 border-sky-500 dark:border-sky-400' : ''
+                }`}
               >
                 关于
               </Link>
               {session?.user?.role === 'admin' && (
                 <Link 
                   href="/admin" 
-                  className="font-quicksand text-purple-600 dark:text-purple-400 hover:text-purple-800 dark:hover:text-purple-300 transition-colors duration-200"
+                  className={`font-quicksand text-purple-600 dark:text-purple-400 hover:text-purple-800 dark:hover:text-purple-300 transition-colors duration-200 ${
+                    pathname === '/admin' || pathname.startsWith('/admin/') ? 'font-bold border-b-2 border-purple-500 dark:border-purple-400' : ''
+                  }`}
                 >
                   管理
                 </Link>

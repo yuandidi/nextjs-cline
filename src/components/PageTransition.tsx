@@ -4,8 +4,17 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { usePathname, useSearchParams } from 'next/navigation'
 
-const createParticles = (x: number, y: number) => {
-  const particles = []
+interface Particle {
+  x: number
+  y: number
+  angle: number
+  radius: number
+  speed: number
+  opacity: number
+}
+
+const createParticles = (x: number, y: number): Particle[] => {
+  const particles: Particle[] = []
   for (let i = 0; i < 30; i++) {
     particles.push({
       x,
@@ -25,7 +34,7 @@ interface PageTransitionProps {
 
 export default function PageTransition({ children }: PageTransitionProps) {
   const [isLoading, setIsLoading] = useState(false)
-  const [particles, setParticles] = useState<any[]>([])
+  const [particles, setParticles] = useState<Particle[]>([])
   const [isTransitioning, setIsTransitioning] = useState(false)
   const [transitionComplete, setTransitionComplete] = useState(false)
   
@@ -120,6 +129,18 @@ export default function PageTransition({ children }: PageTransitionProps) {
       const isSamePageHash = href.startsWith('#') && href.split('#')[0] === pathname
       
       if (isExternal && !isSamePageHash) return
+      
+      // 检查是否点击的是当前页面的链接
+      const hrefWithoutHash = href.split('#')[0]
+      const pathnameWithoutHash = pathname.split('#')[0]
+      
+      // 如果点击的是当前页面的链接，不触发转场动画
+      if (hrefWithoutHash === pathnameWithoutHash || 
+          (hrefWithoutHash === '/' && pathnameWithoutHash === '') || 
+          (hrefWithoutHash === '' && pathnameWithoutHash === '/')) {
+        console.log('Same page link clicked, skipping transition')
+        return
+      }
       
       // 存储点击位置
       clickPositionRef.current = { x: e.clientX, y: e.clientY }
