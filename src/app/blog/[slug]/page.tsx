@@ -2,7 +2,6 @@ import { getPostBySlug } from '@/lib/blog';
 import MDXContent from '@/components/MDXContent';
 import { formatDate } from '@/lib/utils';
 import CoverImage from '@/components/CoverImage';
-import TagList from '@/components/TagList';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
@@ -30,20 +29,17 @@ export default async function BlogPost({ params }: { params: { slug: string } })
           {formatDate(post.date)}
         </p>
         
-        {post.tags && post.tags.length > 0 && (
-          <div className="mt-4">
-            <TagList tags={post.tags} />
-          </div>
-        )}
       </div>
       
-      <div className="relative h-64 sm:h-96 w-full mb-8 rounded-lg overflow-hidden bg-gray-200 dark:bg-gray-700">
-        <CoverImage 
-          src={post.coverImage} 
-          alt={`Cover image for ${post.title}`}
-          title={post.title}
-        />
-      </div>
+      {post.type !== 'feishu' && post.coverImage && (
+        <div className="relative h-64 sm:h-96 w-full mb-8 rounded-lg overflow-hidden bg-gray-200 dark:bg-gray-700">
+          <CoverImage 
+            src={post.coverImage} 
+            alt={`Cover image for ${post.title}`}
+            title={post.title}
+          />
+        </div>
+      )}
       
       <div className="prose prose-lg dark:prose-invert max-w-none">
         <MDXContent source={post.content} />

@@ -7,7 +7,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "seed": "ts-node --compiler-options \"{\\\"module\\\":\\\"CommonJS\\\"}\" prisma/seed.ts"
+    "seed": "ts-node --compiler-options \"{\\\"module\\\":\\\"CommonJS\\\"}\" prisma/seed.ts",
+    "feishu:export": "node scripts/feishu-export/index.cjs",
+    "feishu:import": "node scripts/import-feishu-to-db.js",
+    "feishu:sync": "node scripts/feishu-sync.js"
   },
   "prisma": {
     "seed": "ts-node --compiler-options \"{\\\"module\\\":\\\"CommonJS\\\"}\" prisma/seed.ts"
@@ -23,6 +26,7 @@
     "@uiw/react-md-editor": "^4.0.6",
     "bcrypt": "^6.0.0",
     "core-js": "^3.42.0",
+    "feishu-pages": "^0.7.6",
     "gray-matter": "^4.0.3",
     "highlight.js": "^11.11.0",
     "next": "^14.2.0",

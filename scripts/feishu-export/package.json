@@ -1,0 +1,25 @@
+{
+  "name": "feishu-export",
+  "version": "1.0.0",
+  "description": "导出飞书知识库内容到博客的工具",
+  "main": "index.js",
+  "type": "commonjs",
+  "scripts": {
+    "export": "node index.js",
+    "start": "node index.js"
+  },
+  "keywords": [
+    "feishu",
+    "blog",
+    "export"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^16.3.1",
+    "feishu-pages": "^0.1.4"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}

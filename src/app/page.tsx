@@ -35,7 +35,7 @@ export default async function Home() {
           最新文章
         </h2>
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-          {posts.map((post) => (
+          {posts.slice(0, 6).map((post) => (
             <BlogPostCard key={post.slug} post={post} />
           ))}
         </div>

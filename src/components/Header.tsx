@@ -47,12 +47,12 @@ export default function Header() {
                 首页
               </Link>
               <Link 
-                href="/tags" 
-                className={`font-quicksand text-lavender-600 dark:text-lavender-400 hover:text-lavender-800 dark:hover:text-lavender-300 transition-colors duration-200 ${
-                  pathname === '/tags' || pathname.startsWith('/tags/') ? 'font-bold border-b-2 border-lavender-500 dark:border-lavender-400' : ''
+                href="/feishu" 
+                className={`font-quicksand text-sakura-600 dark:text-sakura-400 hover:text-sakura-800 dark:hover:text-sakura-300 transition-colors duration-200 ${
+                  pathname === '/feishu' || pathname.startsWith('/feishu/') ? 'font-bold border-b-2 border-sakura-500 dark:border-sakura-400' : ''
                 }`}
               >
-                标签
+                飞书文档
               </Link>
               <Link 
                 href="/about" 
@@ -62,16 +62,6 @@ export default function Header() {
               >
                 关于
               </Link>
-              {session?.user?.role === 'admin' && (
-                <Link 
-                  href="/admin" 
-                  className={`font-quicksand text-purple-600 dark:text-purple-400 hover:text-purple-800 dark:hover:text-purple-300 transition-colors duration-200 ${
-                    pathname === '/admin' || pathname.startsWith('/admin/') ? 'font-bold border-b-2 border-purple-500 dark:border-purple-400' : ''
-                  }`}
-                >
-                  管理
-                </Link>
-              )}
             </nav>
             <div className="flex items-center space-x-4">
               <DarkModeToggle />

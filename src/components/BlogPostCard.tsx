@@ -4,7 +4,6 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { formatDate } from '@/lib/utils';
 import { useState } from 'react';
-import TagList from './TagList';
 
 interface BlogPostCardProps {
   post: {
@@ -13,7 +12,7 @@ interface BlogPostCardProps {
     excerpt: string;
     date: string;
     coverImage?: string;
-    tags?: string[];
+    type?: string;
   };
 }
 
@@ -46,7 +45,7 @@ export default function BlogPostCard({ post }: BlogPostCardProps) {
         <p className="text-sm text-lavender-600 dark:text-lavender-400 font-quicksand">
           {formatDate(post.date)}
         </p>
-        <Link href={`/blog/${post.slug}`}>
+        <Link href={post.type === 'feishu' ? `/feishu/${post.slug}` : `/blog/${post.slug}`}>
           <h3 className="mt-2 text-xl font-semibold font-quicksand text-gray-900 dark:text-white hover:text-sakura-600 dark:hover:text-sakura-400 transition-colors duration-200">
             {post.title}
           </h3>
@@ -54,14 +53,15 @@ export default function BlogPostCard({ post }: BlogPostCardProps) {
         <p className="mt-3 text-base text-gray-600 dark:text-gray-300">
           {post.excerpt}
         </p>
-        {post.tags && post.tags.length > 0 && (
-          <TagList tags={post.tags} className="mt-3" />
-        )}
         
         <div className="mt-4">
           <Link 
-            href={`/blog/${post.slug}`}
-            className="inline-flex items-center text-sakura-600 dark:text-sakura-400 hover:text-sakura-800 dark:hover:text-sakura-300 transition-colors duration-200 font-quicksand"
+            href={post.type === 'feishu' ? `/feishu/${post.slug}` : `/blog/${post.slug}`}
+            className={`inline-flex items-center ${
+              post.type === 'feishu' 
+                ? 'text-green-600 dark:text-green-400 hover:text-green-800 dark:hover:text-green-300' 
+                : 'text-sakura-600 dark:text-sakura-400 hover:text-sakura-800 dark:hover:text-sakura-300'
+            } transition-colors duration-200 font-quicksand`}
           >
             阅读更多 
             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">

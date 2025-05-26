@@ -18,6 +18,7 @@ model Post {
   excerpt    String
   coverImage String?
   content    String
+  type       String   @default("blog") // 添加类型字段，默认为blog，可以是"blog"或"feishu"
   tags       Tag[]    @relation("PostToTag")
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt

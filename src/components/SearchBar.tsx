@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { BlogPost } from '@/lib/blog';
 
 interface SearchBarProps {
-  posts: BlogPost[];
+  posts?: BlogPost[];
 }
 
 export default function SearchBar({ posts }: SearchBarProps) {
@@ -26,7 +26,13 @@ export default function SearchBar({ posts }: SearchBarProps) {
     
     setIsSearching(true);
     
-    // Filter posts based on search term
+    // 如果没有传入posts，则不进行搜索
+    if (!posts || posts.length === 0) {
+      setSearchResults([]);
+      return;
+    }
+    
+    // 根据搜索词过滤文章
     const results = posts.filter(post => {
       const titleMatch = post.title.toLowerCase().includes(term.toLowerCase());
       const excerptMatch = post.excerpt.toLowerCase().includes(term.toLowerCase());
@@ -38,11 +44,17 @@ export default function SearchBar({ posts }: SearchBarProps) {
     setSearchResults(results);
   };
 
-  const handleResultClick = (slug: string) => {
+  const handleResultClick = (slug: string, type?: string) => {
     setSearchTerm('');
     setSearchResults([]);
     setIsSearching(false);
-    router.push(`/blog/${slug}`);
+    
+    // 根据文章类型决定跳转路径
+    if (type === 'feishu') {
+      router.push(`/feishu/${slug}`);
+    } else {
+      router.push(`/blog/${slug}`);
+    }
   };
 
   return (
@@ -82,7 +94,7 @@ export default function SearchBar({ posts }: SearchBarProps) {
             {searchResults.map((post) => (
               <li key={post.slug} className="border-b border-sakura-100 dark:border-sakura-900 last:border-b-0">
                 <button
-                  onClick={() => handleResultClick(post.slug)}
+                  onClick={() => handleResultClick(post.slug, post.type)}
                   className="w-full text-left px-4 py-3 hover:bg-sakura-50 dark:hover:bg-gray-700 transition-colors"
                 >
                   <h3 className="font-medium font-quicksand text-gray-900 dark:text-white">{post.title}</h3>
