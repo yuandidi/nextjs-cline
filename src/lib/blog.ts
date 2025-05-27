@@ -1,4 +1,3 @@
-import { fetchTags } from './api';
 import { getAllFeishuPosts, getFeishuPostBySlug, getAllFeishuSlugs } from './api-feishu';
 
 export interface BlogPost {
@@ -14,9 +13,6 @@ export interface BlogPost {
   seoKeywords?: string;
   type?: string; // 'blog' 或 'feishu'
 }
-
-// 空的示例文章数组，不再使用示例文章
-const samplePosts: BlogPost[] = [];
 
 /**
  * Get all blog posts with their metadata
@@ -82,47 +78,5 @@ export async function getAllPostSlugs(): Promise<string[]> {
   } catch (error) {
     console.log('Error in getAllPostSlugs:', error);
     return [];
-  }
-}
-
-/**
- * Get all posts with a specific tag
- * @param tag - The tag to filter by
- * @returns Array of blog posts with the specified tag
- */
-export async function getPostsByTag(tag: string): Promise<BlogPost[]> {
-  try {
-    // Try to fetch from API first
-    const allPosts = await getAllPosts();
-    return allPosts.filter(post => post.tags && post.tags.includes(tag));
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  } catch (error) {
-    console.log(`Falling back to sample posts for tag: ${tag}:`, error);
-    // Fall back to sample posts if API fails
-    return samplePosts.filter(post => post.tags && post.tags.includes(tag));
-  }
-}
-
-/**
- * Get all unique tags from all blog posts
- * @returns Array of unique tags
- */
-export async function getAllTags(): Promise<string[]> {
-  try {
-    // Try to fetch from API first
-    return await fetchTags();
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  } catch (error) {
-    console.log('Falling back to sample tags:', error);
-    // Fall back to sample posts if API fails
-    const tagsSet = new Set<string>();
-    
-    samplePosts.forEach(post => {
-      if (post.tags && post.tags.length > 0) {
-        post.tags.forEach(tag => tagsSet.add(tag));
-      }
-    });
-    
-    return Array.from(tagsSet).sort();
   }
 }
